@@ -10,6 +10,7 @@ class Play extends Phaser.Scene {
         this.load.image("spaceship", "./assets/spaceship.png");
         this.load.image("specialShip", "./assets/specialShip.png");
         this.load.image("starfield", "./assets/starfield.png");
+        this.load.image("particle", "./assets/particle.png");
         this.load.spritesheet("explosion", "./assets/explosion.png", {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
     }
 
@@ -46,12 +47,7 @@ class Play extends Phaser.Scene {
             keyA, keyD, keyW).setOrigin(0, 0);
         }
 
-        /*// create spaceshipts
-        this.specialShip = new Spaceship(this, game.config.width, borderUISize * 9 + borderPadding, "specialShip", 0, 50, 2);
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);*/
-
+        // create ships
         this.specialShip = new Spaceship(this, game.config.width, borderUISize * 4, "specialShip", 0, 50, 2);
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4 + borderPadding*2, 'spaceship', 0, 30).setOrigin(0, 0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*4, 'spaceship', 0, 20).setOrigin(0,0);
@@ -178,16 +174,23 @@ class Play extends Phaser.Scene {
         }
     }
 
-
     shipExplode(rocket, ship, scoreBoard) {
         // hide, play animation, and reset ship
         ship.alpha = 0;                         
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
+
+        // create particles and emitter
+        let p = this.add.particles("particle");
+        let e = p.createEmitter();
+        e.setPosition(ship.x, ship.y);
+        e.setSpeed(200);
+
         boom.anims.play('explode');
         boom.on('animationcomplete', () => {
             ship.reset();
             ship.alpha = 1;
             boom.destroy();
+            p.destroy();
         });
         
         // update score/scoreboard

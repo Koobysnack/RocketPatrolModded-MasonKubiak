@@ -10,8 +10,9 @@
 // Allow the player to control the Rocket after it's fired (5)
 // Implement the 'FIRE' UI text from the original game (5)
 // Create a new spaceship type (w/ new artwork) that's smaller, moves faster, and is worth more points (20)
+// Use Phaser's particle emitter to create a particle explosion when the rocket hits the spaceship (20)
 // -----------------------------------------------------------
-// TOTAL: 60
+// TOTAL: 80
 
 let config = {
     type: Phaser.AUTO,
