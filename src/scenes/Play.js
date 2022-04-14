@@ -8,6 +8,7 @@ class Play extends Phaser.Scene {
         this.load.image("p1Rocket", "./assets/p1Rocket.png");
         this.load.image("p2Rocket", "./assets/p2Rocket.png");
         this.load.image("spaceship", "./assets/spaceship.png");
+        this.load.image("specialShip", "./assets/specialShip.png");
         this.load.image("starfield", "./assets/starfield.png");
         this.load.spritesheet("explosion", "./assets/explosion.png", {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
     }
@@ -45,10 +46,16 @@ class Play extends Phaser.Scene {
             keyA, keyD, keyW).setOrigin(0, 0);
         }
 
-        // create spaceshipts
+        /*// create spaceshipts
+        this.specialShip = new Spaceship(this, game.config.width, borderUISize * 9 + borderPadding, "specialShip", 0, 50, 2);
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);*/
+
+        this.specialShip = new Spaceship(this, game.config.width, borderUISize * 4, "specialShip", 0, 50, 2);
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4 + borderPadding*2, 'spaceship', 0, 30).setOrigin(0, 0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*4, 'spaceship', 0, 20).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*6, 'spaceship', 0, 10).setOrigin(0,0);
 
         // create animation
         this.anims.create({
@@ -71,8 +78,8 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         };
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, 
-        this.p1Rocket.score, scoreConfig);
-
+            this.p1Rocket.score, scoreConfig);
+    
         // if p2, create p2 scoreboard
         if(game.settings.numPlayers == 2) {
             scoreConfig.backgroundColor = "#ff1c1c";
@@ -81,6 +88,12 @@ class Play extends Phaser.Scene {
             borderUISize + borderPadding * 2, this.p2Rocket.score, scoreConfig);
         }
 
+        // create fire UI
+        scoreConfig.backgroundColor = "#F3B141";
+        scoreConfig.align = "center";
+        this.fireUI = this.add.text((game.config.width / 2) - (scoreConfig.fixedWidth / 2), 
+        borderUISize + borderPadding * 2, "FIRE", scoreConfig);
+        
         // timer
         this.gameOver = false;
         scoreConfig.fixedWidth = 0;
@@ -112,6 +125,18 @@ class Play extends Phaser.Scene {
             this.ship01.update();
             this.ship02.update();
             this.ship03.update();
+            this.specialShip.update();
+        }
+        
+        // fire UI
+        if(this.p1Rocket.isFiring) { 
+            this.fireUI.alpha = 1; 
+        }
+        else if(game.settings.numPlayers == 2 && this.p2Rocket.isFiring) { 
+            this.fireUI.alpha = 1; 
+        }
+        else {
+            this.fireUI.alpha = 0;
         }
 
         // collision detection
@@ -132,6 +157,10 @@ class Play extends Phaser.Scene {
         if(this.checkCollision(rocket, this.ship03)) {
             rocket.reset();
             this.shipExplode(rocket, this.ship03, scoreBoard);
+        }
+        if(this.checkCollision(rocket, this.specialShip)) {
+            rocket.reset();
+            this.shipExplode(rocket, this.specialShip, scoreBoard);
         }
     }
 
