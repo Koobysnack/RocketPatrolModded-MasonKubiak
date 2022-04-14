@@ -179,6 +179,8 @@ class Play extends Phaser.Scene {
         ship.alpha = 0;                         
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
 
+        if(ship.direction == -1) { boom.y -= 32; }
+
         // create particles and emitter
         let p = this.add.particles("particle");
         let e = p.createEmitter();
