@@ -1,5 +1,5 @@
 class Rocket extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, frame) {
+    constructor(scene, x, y, texture, left, right, fire, frame) {
         super(scene, x, y, texture, frame);
         scene.add.existing(this);   // adds to existing scene
 
@@ -7,24 +7,24 @@ class Rocket extends Phaser.GameObjects.Sprite {
         this.moveSpeed = 2; // pixels per frame
         this.sfxRocket  = scene.sound.add("sfx_rocket");
 
-        // add this.leftKey, this.rightKey, this.fireKey for 2 player
+        // player-specific controls and score
+        this.leftKey = left;
+        this.rightKey = right;
+        this.fireKey = fire;
+        this.score = 0;
     }
 
     update() {
         // movement
-        if(!this.isFiring) {
-            // change to this.leftKey/rightKey.isDown
-            if(keyLEFT.isDown && this.x >= borderUISize + this.width) {
-                this.x -= this.moveSpeed;
-            }
-            else if(keyRIGHT.isDown && this.x <= game.config.width - borderUISize - this.width) {
-                this.x += this.moveSpeed;
-            }
+        if(this.leftKey.isDown && this.x >= borderUISize + this.width) {
+            this.x -= this.moveSpeed;
+        }
+        else if(this.rightKey.isDown && this.x <= game.config.width - borderUISize - this.width) {
+            this.x += this.moveSpeed;
         }
 
         // getting fire input
-        // change to this.fireKey
-        if(Phaser.Input.Keyboard.JustDown(keyF) && !this.isFiring) {
+        if(Phaser.Input.Keyboard.JustDown(this.fireKey) && !this.isFiring) {
             this.isFiring = true;
             this.sfxRocket.play();
         }

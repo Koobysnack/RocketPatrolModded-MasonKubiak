@@ -17,7 +17,7 @@ class Menu extends Phaser.Scene {
             fontSize: "28px",
             backgroundColor: "#F3B141",
             color: "#843605",
-            align: "right",
+            align: "center",
             padding: {
                 top: 5,
                 bottom: 5
@@ -26,42 +26,56 @@ class Menu extends Phaser.Scene {
         };
 
         // menu text
-        // edit to allow 2 players
         this.add.text(game.config.width / 2, game.config.height / 2 - borderUISize - borderPadding,
                       "Rocket Patrol", menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width / 2, game.config.height / 2, "Use ←→ arrows to move and (F) to fire", menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2 + borderPadding, 
+        "Player 1\nUse ←→ arrows to move and (↑) to fire", menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2 + borderPadding * 7, 
+        "Player 2\nUse A/D arrows to move and (W) to fire", menuConfig).setOrigin(0.5);
+
         menuConfig.backgroundColor = "#00FF00";
         menuConfig.color = "#000";
-        this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize + borderPadding,
-                      "Press ← for Novice and → for Expert", menuConfig).setOrigin(0.5);
+        menuConfig.fontSize = "20px";
+
+        this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize + borderPadding * 10,
+                      "Single Player: Press ← for Novice and → for Expert", menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize + borderPadding * 13,
+                      "Multiplayer: Press ↓ for Novice and ↑ for Expert", menuConfig).setOrigin(0.5);
         
         // set keycodes
-        // add new keycodes
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+
+        // novice (SINGLE PLAYER)
+        keyLEFT.on("down", (key, event) => {
+            this.setGameSettings(3, 60000, 1);
+        });
+
+        // expert (SINGLE PLAYER)
+        keyRIGHT.on("down", (key, event) => {
+            this.setGameSettings(4, 45000, 1);
+        });
+
+        // novice (MULTIPLAYER)
+        keyDOWN.on("down", (key, event) => {
+            this.setGameSettings(3, 60000, 2);
+        });
+
+        // expert (MULTIPLAYER)
+        keyUP.on("down", (key, event) => {
+            this.setGameSettings(4, 45000, 2);
+        });
     }
 
-    update() {
-        // novice
-        if(Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            game.settings = {
-                spaceshipSpeed: 3,
-                gameTimer: 60000
-            };
-            this.sound.play("sfx_select");
-            this.scene.start("playScene");
-        }
-
-        // expert
-        if(Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
-            game.settings = { 
-                spaceshipSpeed: 4,
-                gameTimer: 45000
-            };
-            this.sound.play("sfx_select");
-            this.scene.start("playScene");
-        }
-
-        // add keyUP and keyDOWN for 2 player novice/expert
+    setGameSettings(speed, time, players) {
+        game.settings = {
+            spaceshipSpeed: speed,
+            gameTimer: time,
+            numPlayers: players
+        };
+        this.sound.play("sfx_select");
+        this.scene.start("playScene");
     }
 }
