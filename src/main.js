@@ -2,7 +2,7 @@
  * Author:              Mason Kubiak
  * Project Name:        Rocket Patrol- Modded
  * Date:                4/9/22
- * Length to complete:  SO FAR: 6 hours
+ * Length to complete:  6 hours
  **********************************************/
 
 // POINT BREAKDOWN
