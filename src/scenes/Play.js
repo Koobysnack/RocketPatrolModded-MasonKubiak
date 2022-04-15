@@ -98,8 +98,8 @@ class Play extends Phaser.Scene {
         
         // timer
         this.gameOver = false;
-        scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+            scoreConfig.fixedWidth = 0;
             this.add.text(game.config.width / 2, game.config.height / 2, "Game Over", scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 64, "Press (R) To Restart or ← for Menu", 
                           scoreConfig).setOrigin(0.5);
@@ -148,7 +148,6 @@ class Play extends Phaser.Scene {
 
         // player 2 fire UI
         if(game.settings.numPlayers == 2 && this.p2Rocket.isFiring) { 
-            console.log("FIring");
             this.p2FireUI.alpha = 1; 
         }
         else if(game.settings.numPlayers == 2 && !this.p2Rocket.isFiring) {
