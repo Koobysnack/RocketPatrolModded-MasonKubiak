@@ -11,9 +11,10 @@
 // Implement the 'FIRE' UI text from the original game (5)
 // Create a new spaceship type (w/ new artwork) that's smaller, moves faster, and is worth more points (20)
 // Use Phaser's particle emitter to create a particle explosion when the rocket hits the spaceship (20)
+// Create 4 new explosion SFX and randomize which one plays on impact (10)
 // Randomize each spaceship's movement direction at the start of each play (5)
 // -----------------------------------------------------------
-// TOTAL: 85
+// TOTAL: 95
 
 let config = {
     type: Phaser.AUTO,

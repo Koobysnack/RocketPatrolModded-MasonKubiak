@@ -48,10 +48,10 @@ class Play extends Phaser.Scene {
         }
 
         // create ships
-        this.specialShip = new Spaceship(this, game.config.width, borderUISize * 4, "specialShip", 0, 50, 2);
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4 + borderPadding*2, 'spaceship', 0, 30).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*4, 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*6, 'spaceship', 0, 10).setOrigin(0,0);
+        this.specialShip = new Spaceship(this, game.config.width, borderUISize * 4, "specialShip", 0, 50, 1);
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*5 + borderPadding*2, 'spaceship', 0, 30).setOrigin(0, 0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*6 + borderPadding*4, 'spaceship', 0, 20).setOrigin(0, 0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*7 + borderPadding*6, 'spaceship', 0, 10).setOrigin(0, 0);
 
         // create animation
         this.anims.create({
@@ -164,9 +164,9 @@ class Play extends Phaser.Scene {
     {
         // AABB collision detection
         if(rocket.x < ship.x + ship.width &&
-           rocket.x + rocket.width > ship.x &&
-           rocket.y < ship.y + ship.height &&
-           rocket.y + rocket.height > ship.y) {
+        rocket.x + rocket.width > ship.x &&
+        rocket.y < ship.y + ship.height &&
+        rocket.y + rocket.height > ship.y) {
             return true;
         }
         else {
@@ -176,10 +176,8 @@ class Play extends Phaser.Scene {
 
     shipExplode(rocket, ship, scoreBoard) {
         // hide, play animation, and reset ship
-        ship.alpha = 0;                         
+        ship.alpha = 0;
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
-
-        if(ship.direction == -1) { boom.y -= 32; }
 
         // create particles and emitter
         let p = this.add.particles("particle");
@@ -199,6 +197,12 @@ class Play extends Phaser.Scene {
         rocket.score += ship.points;
         scoreBoard.text = rocket.score;
 
-        this.sound.play("sfx_explosion");
+        let explosionSound = Math.floor(Math.random() * 6);
+        if(explosionSound == 0) { this.sound.play("sfx_explosion1"); }
+        else if(explosionSound == 1) { this.sound.play("sfx_explosion2"); }
+        else if(explosionSound == 2) { this.sound.play("sfx_explosion3"); }
+        else if(explosionSound == 3) { this.sound.play("sfx_explosion4"); }
+        else if(explosionSound == 4) { this.sound.play("sfx_explosion5"); }
+        else { this.sound.play("sfx_explosion38"); }
     }
 }

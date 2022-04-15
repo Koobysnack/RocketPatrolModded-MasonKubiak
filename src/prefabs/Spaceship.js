@@ -5,10 +5,7 @@ class Spaceship extends Phaser.GameObjects.Sprite {
 
         // choose direction
         this.direction = Math.random() < 0.5 ? -1 : 1;
-        if(this.direction == -1) { 
-            this.angle = 180;
-            this.y += 32;
-        }
+        if(this.direction == -1) { this.flipX = true; }
 
         this.points = pointValue; // points given when blown up
         this.moveSpeed = game.settings.spaceshipSpeed * speedMultiplier * this.direction;
