@@ -2,7 +2,7 @@
  * Author:              Mason Kubiak
  * Project Name:        Rocket Patrol- Modded
  * Date:                4/9/22
- * Length to complete:  SO FAR: 3 hours
+ * Length to complete:  SO FAR: 6 hours
  **********************************************/
 
 // POINT BREAKDOWN
@@ -12,9 +12,10 @@
 // Create a new spaceship type (w/ new artwork) that's smaller, moves faster, and is worth more points (20)
 // Use Phaser's particle emitter to create a particle explosion when the rocket hits the spaceship (20)
 // Create 4 new explosion SFX and randomize which one plays on impact (10)
+// Display the time remaining (in seconds) on the screen (10)
 // Randomize each spaceship's movement direction at the start of each play (5)
 // -----------------------------------------------------------
-// TOTAL: 95
+// TOTAL: 105
 
 let config = {
     type: Phaser.AUTO,

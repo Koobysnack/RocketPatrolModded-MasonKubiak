@@ -37,7 +37,7 @@ class Play extends Phaser.Scene {
         this.p1Rocket = new Rocket(this, game.config.width / 2, game.config.height - borderUISize - borderPadding, "p1Rocket",
         keyLEFT, keyRIGHT, keyUP).setOrigin(0, 0);
 
-        // if there are two players, set player 2 keycodes and make second player
+        // if p2, set player 2 keycodes and make second player
         if(game.settings.numPlayers == 2) {
             keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
             keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -48,7 +48,7 @@ class Play extends Phaser.Scene {
         }
 
         // create ships
-        this.specialShip = new Spaceship(this, game.config.width, borderUISize * 4, "specialShip", 0, 50, 1);
+        this.specialShip = new Spaceship(this, game.config.width, borderUISize * 4, "specialShip", 0, 50, 2);
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*5 + borderPadding*2, 'spaceship', 0, 30).setOrigin(0, 0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*6 + borderPadding*4, 'spaceship', 0, 20).setOrigin(0, 0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*7 + borderPadding*6, 'spaceship', 0, 10).setOrigin(0, 0);
@@ -87,8 +87,14 @@ class Play extends Phaser.Scene {
         // create fire UI
         scoreConfig.backgroundColor = "#F3B141";
         scoreConfig.align = "center";
-        this.fireUI = this.add.text((game.config.width / 2) - (scoreConfig.fixedWidth / 2), 
+        this.p1FireUI = this.add.text(this.scoreLeft.x + scoreConfig.fixedWidth + borderPadding, 
         borderUISize + borderPadding * 2, "FIRE", scoreConfig);
+
+        // if p2, create p2 fire UI
+        if(game.settings.numPlayers == 2) {
+            this.p2FireUI = this.add.text(this.scoreRight.x - scoreConfig.fixedWidth - borderPadding, 
+                borderUISize + borderPadding * 2, "FIRE", scoreConfig);
+        }
         
         // timer
         this.gameOver = false;
@@ -99,6 +105,11 @@ class Play extends Phaser.Scene {
                           scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
+
+        // timer UI
+        scoreConfig.fixedWidth = 100;
+        this.timerUI = this.add.text((game.config.width / 2) - (scoreConfig.fixedWidth / 2), 
+        borderUISize + borderPadding * 2, (this.clock.delay -this.clock.elapsed) / 1000, scoreConfig);
     }
 
     update() {
@@ -109,6 +120,9 @@ class Play extends Phaser.Scene {
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
         }
+
+        // update timer UI
+        this.timerUI.text = (this.clock.delay -this.clock.elapsed) / 1000;
         
         // update starfield
         this.starfield.tilePositionX -= 4;
@@ -124,15 +138,21 @@ class Play extends Phaser.Scene {
             this.specialShip.update();
         }
         
-        // fire UI
+        // player 1 fire UI
         if(this.p1Rocket.isFiring) { 
-            this.fireUI.alpha = 1; 
-        }
-        else if(game.settings.numPlayers == 2 && this.p2Rocket.isFiring) { 
-            this.fireUI.alpha = 1; 
+            this.p1FireUI.alpha = 1; 
         }
         else {
-            this.fireUI.alpha = 0;
+            this.p1FireUI.alpha = 0;
+        }
+
+        // player 2 fire UI
+        if(game.settings.numPlayers == 2 && this.p2Rocket.isFiring) { 
+            console.log("FIring");
+            this.p2FireUI.alpha = 1; 
+        }
+        else if(game.settings.numPlayers == 2 && !this.p2Rocket.isFiring) {
+            this.p2FireUI.alpha = 0;
         }
 
         // collision detection
@@ -175,16 +195,15 @@ class Play extends Phaser.Scene {
     }
 
     shipExplode(rocket, ship, scoreBoard) {
-        // hide, play animation, and reset ship
-        ship.alpha = 0;
-        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
-
         // create particles and emitter
         let p = this.add.particles("particle");
         let e = p.createEmitter();
         e.setPosition(ship.x, ship.y);
         e.setSpeed(200);
 
+        // hide, play animation, and reset ship
+        ship.alpha = 0;
+        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
         boom.anims.play('explode');
         boom.on('animationcomplete', () => {
             ship.reset();
@@ -197,6 +216,7 @@ class Play extends Phaser.Scene {
         rocket.score += ship.points;
         scoreBoard.text = rocket.score;
 
+        // choose random explosion sound
         let explosionSound = Math.floor(Math.random() * 6);
         if(explosionSound == 0) { this.sound.play("sfx_explosion1"); }
         else if(explosionSound == 1) { this.sound.play("sfx_explosion2"); }
